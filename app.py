@@ -1,4 +1,5 @@
 # pylint: disable=(missing-module-docstring)
+# pylint: disable-message=F0010
 import io
 
 import duckdb as dd
