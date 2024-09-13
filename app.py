@@ -1,6 +1,7 @@
 # pylint: disable=(missing-module-docstring)
 # pylint: disable-message=F0010
 
+import io
 import logging
 import os
 
@@ -32,7 +33,7 @@ con = duckdb.connect(database="data/exercises_sql_tables.duckdb", read_only=Fals
 with st.sidebar:
     theme = st.selectbox(
         "What would you like to review?",
-        ("cross_joins", "GroupBy", "window_functions"),
+        ("Joins", "GroupBy", "Windows Functions"),
         index=None,
         placeholder="Please select a theme...",
     )
@@ -87,3 +88,4 @@ with tab2:
 
 with tab3:
     st.write(answer)
+
