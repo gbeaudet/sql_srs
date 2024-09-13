@@ -2,6 +2,7 @@
 # pylint: disable-message=F0010
 
 import ast
+
 import duckdb
 import streamlit as st
 
@@ -19,7 +20,7 @@ Spaced Repetition System SQL practice
 
 con = duckdb.connect(database="data/exercises_sql_tables.duckdb", read_only=False)
 
-#solution_df = dd.sql(ANSWER_STR).df()
+# solution_df = dd.sql(ANSWER_STR).df()
 
 # Sidebar :
 with st.sidebar:
@@ -62,6 +63,8 @@ with tab2:
         df_table = con.execute(f"SELECT * FROM {table}").df()
         st.dataframe(df_table)
 
-#with tab3:
-#    st.write(ANSWER_STR)
-
+with tab3:
+    exercise_name = exercise.loc[0, "exercise_name"]
+    with open(f"answers/{exercise_name}.sql", "r") as f:
+        answer = f.read()
+    st.write(answer)
