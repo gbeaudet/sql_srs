@@ -1,17 +1,10 @@
 # pylint: disable=(missing-module-docstring)
 # pylint: disable-message=F0010
-import io
 
-<<<<<<< HEAD
-import io
 import logging
 import os
 
 import duckdb
-=======
-import duckdb as dd
-import pandas as pd
->>>>>>> df2e180be6348d152022375e7d449600a14e1283
 import streamlit as st
 
 st.title(
@@ -21,7 +14,6 @@ Spaced Repetition System SQL practice
 """
 )
 
-<<<<<<< HEAD
 # Vérification existence répertoire data/ (céation si besoin) :
 if "data" not in os.listdir():
     print("creating folder data")
@@ -35,41 +27,15 @@ if "exercices_sql_tables.duckdb" not in os.listdir("data"):
     # subprocess.run(["python", "init_db.py"])
 
 con = duckdb.connect(database="data/exercises_sql_tables.duckdb", read_only=False)
-=======
-# Déclaration des dataframes et des autres variables :
-CSV = """
-beverage,price
-orange juice,2.5
-Expresso,2
-Tea,3
-"""
-beverages = pd.read_csv(io.StringIO(CSV))
-
-CSV2 = """
-food_item,food_price
-cookie juice,2.5
-chocolatine,2
-muffin,3
-"""
-food_items = pd.read_csv(io.StringIO(CSV2))
-
-ANSWER_STR = """
-SELECT * FROM beverages
-CROSS JOIN food_items
-"""
-
-solution_df = dd.sql(ANSWER_STR).df()
->>>>>>> df2e180be6348d152022375e7d449600a14e1283
 
 # Sidebar :
 with st.sidebar:
-    option = st.selectbox(
+    theme = st.selectbox(
         "What would you like to review?",
-        ("Joins", "GroupBy", "Windows Functions"),
+        ("cross_joins", "GroupBy", "window_functions"),
         index=None,
         placeholder="Please select a theme...",
     )
-<<<<<<< HEAD
     st.write("You selected the following theme:", theme)
 
     # On va trier par ancienneté, et on reset l'index :
@@ -92,15 +58,10 @@ with st.sidebar:
     solution_df = con.execute(answer).df()
 
 # Requête SQL de l'utilisateur :
-=======
-    st.write("You selected the following theme:", option)
-
-# Question SQL par la collègue :
->>>>>>> df2e180be6348d152022375e7d449600a14e1283
 st.header("Enter your code:")
 query = st.text_area(label="Your SQL code here:", key="user_input")
 if query:
-    result = dd.sql(query).df()
+    result = con.execute(query).df()
     st.dataframe(result)
 
     try:
@@ -118,7 +79,6 @@ if query:
 tab2, tab3 = st.tabs(["Tables", "Solution"])
 
 with tab2:
-<<<<<<< HEAD
     exercise_tables = exercise.loc[0, "tables"]
     for table in exercise_tables:
         st.write(f"Table: {table}")
@@ -128,14 +88,4 @@ with tab2:
 with tab3:
     st.write(answer)
 
-=======
-    st.write("Table: beverages")
-    st.dataframe(beverages)
-    st.write("Table: food_items")
-    st.dataframe(food_items)
-    st.write("Expected:")
-    st.dataframe(solution_df)
-
-with tab3:
-    st.write(ANSWER_STR)
->>>>>>> df2e180be6348d152022375e7d449600a14e1283
+# Test réparation branche master 19/09 pm
