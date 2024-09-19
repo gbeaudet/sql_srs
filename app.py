@@ -1,6 +1,9 @@
 # pylint: disable=(missing-module-docstring)
 # pylint: disable-message=F0010
 
+import logging
+import os
+
 import duckdb
 import streamlit as st
 
@@ -11,6 +14,17 @@ Spaced Repetition System SQL practice
 """
 )
 
+# Vérification existence répertoire data/ (céation si besoin) :
+if "data" not in os.listdir():
+    print("creating folder data")
+    logging.error(os.listdir())
+    logging.error("creating folder data")
+    os.mkdir("data")
+
+# Vérification existence fichier exercices_sql_tables.duckdb (création si besoin) :
+if "exercices_sql_tables.duckdb" not in os.listdir("data"):
+    exec(open("init_db.py").read())  # pylint disable!
+    # subprocess.run(["python", "init_db.py"])
 
 con = duckdb.connect(database="data/exercises_sql_tables.duckdb", read_only=False)
 
