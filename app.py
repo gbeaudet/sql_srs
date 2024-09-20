@@ -1,4 +1,4 @@
-# pylint: disable=(missing-module-docstring)
+# pylint: disable=(missing-module-docstring, exec-used, consider-using-with)
 # pylint: disable-message=F0010
 
 import logging
@@ -23,35 +23,37 @@ if "data" not in os.listdir():
 
 # Vérification existence fichier exercices_sql_tables.duckdb (création si besoin) :
 if "exercices_sql_tables.duckdb" not in os.listdir("data"):
-    exec(open("init_db.py").read())  # pylint disable!
+    exec(open("init_db.py", "r", encoding="utf-8").read())  # pylint disable!
     # subprocess.run(["python", "init_db.py"])
 
 con = duckdb.connect(database="data/exercises_sql_tables.duckdb", read_only=False)
 
-# Sidebar :
+# Sidebar n'affichant que les thèmes existants :
 with st.sidebar:
+    available_themes_df = con.execute("SELECT DISTINCT theme FROM memory_state").df()
+    # st.write(available_themes_df["theme"].unique())
     theme = st.selectbox(
         "What would you like to review?",
-        ("cross_joins", "GroupBy", "window_functions"),
+        available_themes_df["theme"].unique(),
         index=None,
         placeholder="Please select a theme...",
     )
-    st.write("You selected the following theme:", theme)
 
-    # On va trier par ancienneté, et on reset l'index :
+    # Si thème sélectionné, affichage, sinon affichage du dernier thème utilisé :
+    if theme:
+        st.write(f"You selected the theme {theme}")
+        SELECT_EXERCISE_QUERY = f"SELECT * FROM memory_state WHERE theme = '{theme}'"
+    else:
+        SELECT_EXERCISE_QUERY = "SELECT * FROM memory_state"
+
     exercise = (
-        con.execute(f"SELECT * FROM memory_state WHERE theme = '{theme}'")
+        con.execute(SELECT_EXERCISE_QUERY)
         .df()
         .sort_values("last_reviewed")
-        .reset_index()
+        .reset_index(drop=True)
     )
     st.write(exercise)
-
-    try:
-        exercise_name = exercise.loc[0, "exercise_name"]
-    except KeyError as e:
-        st.write("No theme selected!")
-
+    exercise_name = exercise.loc[0, "exercise_name"]
     with open(f"answers/{exercise_name}.sql", "r", encoding="utf-8") as f:
         answer = f.read()
 
@@ -88,4 +90,4 @@ with tab2:
 with tab3:
     st.write(answer)
 
-# Test réparation branche master 19/09 pm
+# PR du 20/09 am
