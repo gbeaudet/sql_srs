@@ -44,26 +44,26 @@ food_items = pd.read_csv(io.StringIO(CSV2))
 con.execute("CREATE TABLE IF NOT EXISTS food_items AS SELECT * FROM food_items")
 
 
-sizes = """
+SIZES = """
 size
 XS
 M
 L
 XL
 """
-sizes = pd.read_csv(io.StringIO(sizes))
+SIZES = pd.read_csv(io.StringIO(SIZES))
 con.execute("CREATE TABLE IF NOT EXISTS sizes AS SELECT * FROM sizes")
 
-trademarks = """
+TRADEMARKS = """
 trademark
 Nike
 Asphalte
 Abercrombie
 Lewis
 """
-trademarks = pd.read_csv(io.StringIO(trademarks))
+TRADEMARKS = pd.read_csv(io.StringIO(TRADEMARKS))
 con.execute("CREATE TABLE IF NOT EXISTS trademarks AS SELECT * FROM trademarks")
 
 con.close()
 
-# Test réparation branche master 19/09 pm
+# PR du 20/09 am
