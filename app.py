@@ -36,22 +36,22 @@ with st.sidebar:
         index=None,
         placeholder="Please select a theme...",
     )
-    st.write("You selected the following theme:", theme)
 
-    # On va trier par ancienneté, et on reset l'index :
+    # Si thème sélectionné, affichage, sinon affichage du dernier thème utilisé :
+    if theme:
+        st.write(f"You selected the theme {theme}")
+        select_exercise_query = f"SELECT * FROM memory_state WHERE theme = '{theme}'"
+    else:
+        select_exercise_query = f"SELECT * FROM memory_state"
+
     exercise = (
-        con.execute(f"SELECT * FROM memory_state WHERE theme = '{theme}'")
+        con.execute(select_exercise_query)
         .df()
         .sort_values("last_reviewed")
-        .reset_index()
-    )
+        .reset_index(drop=True)
+        )
     st.write(exercise)
-
-    try:
-        exercise_name = exercise.loc[0, "exercise_name"]
-    except KeyError as e:
-        st.write("No theme selected!")
-
+    exercise_name = exercise.loc[0, "exercise_name"]
     with open(f"answers/{exercise_name}.sql", "r", encoding="utf-8") as f:
         answer = f.read()
 
