@@ -3,6 +3,7 @@
 
 import logging
 import os
+from datetime import date, timedelta
 
 import duckdb
 import streamlit as st
@@ -42,7 +43,10 @@ def check_users_solution(user_query: str) -> None:
     try:
         result = result[solution_df.columns]
         st.dataframe(result.compare(solution_df))
-    except KeyError as e:
+        if result.compare(solution_df).shape == (0, 0):
+            st.write("Correct !")
+            st.balloons()
+    except KeyError:
         st.write("Some columns are missing!")
     nb_lines_difference = result.shape[0] - solution_df.shape[0]
     if nb_lines_difference != 0:
@@ -88,6 +92,20 @@ query = st.text_area(label="Your SQL code here:", key="user_input")
 
 if query:
     check_users_solution(query)
+
+# Bouton de sélection du délai de ré-interrogation :
+for n_days in [2, 7, 21]:
+    if st.button(f"Revoir dans {n_days} jours"):
+        next_review = date.today() + timedelta(days=n_days)
+        con.execute(
+            f"UPDATE memory_state SET last_reviewed = '{next_review}' "
+            f"WHERE exercise_name= '{exercise_name}'"
+        )
+        st.rerun()
+
+if st.button("Reset"):
+    con.execute("UPDATE memory_state SET last_reviewed = '1970-01-01'")
+    st.rerun()
 
 tab2, tab3 = st.tabs(["Tables", "Solution"])
 
